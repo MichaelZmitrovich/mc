@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Dal\DaoBase.cs" />
     <Compile Include="Dal\IDao.cs" />
+    <Compile Include="Dal\MCEntitiesExt.cs" />
     <Compile Include="Dal\Model.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

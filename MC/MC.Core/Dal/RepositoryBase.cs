@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.EntityClient;
 using System.Data.Objects;
+using System.Linq;
 
 namespace MC.Core.Dal
 {
@@ -53,13 +53,12 @@ namespace MC.Core.Dal
 
 		public virtual void Delete(TEntity entity)
 		{
-			Model.DeleteObject(entity);
+            objectSet.DeleteObject(entity);
 		}
 
 		private DbCommand CreateSelectCommand(string spName, params object[] parameters)
 		{
-			EntityConnection entityConnection = (EntityConnection)Model.Connection;
-			DbConnection storeConnection = entityConnection.StoreConnection;
+            DbConnection storeConnection = Model.Database.Connection;
 			DbCommand storeCommand = storeConnection.CreateCommand();
 
 			// setup command
@@ -70,12 +69,6 @@ namespace MC.Core.Dal
 				storeCommand.Parameters.AddRange(parameters);
 			}
 
-			// pass through command timeout as appropriate
-			if (Model.CommandTimeout.HasValue)
-			{
-				storeCommand.CommandTimeout = Model.CommandTimeout.Value;
-			}
-
 			return storeCommand;
 		}
 
@@ -83,19 +76,16 @@ namespace MC.Core.Dal
 		{
 			DbCommand command = CreateSelectCommand(spName, parameters);
 			IList<TEntity> result;
-			using (command.Connection.CreateConnectionScope())
+			using (DbDataReader reader = command.ExecuteReader())
 			{
-				using (DbDataReader reader = command.ExecuteReader())
-				{
-					result = Materialize(reader);
-				}
+				result = Materialize(reader);
 			}
 			return result;
 		}
 
 		protected virtual IList<TEntity> Materialize(DbDataReader reader)
 		{
-			return Model.Translate<TEntity>(reader, EntitySetName, MergeOption.AppendOnly).ToList();
+			return Model.ObjectContext().Translate<TEntity>(reader, EntitySetName, MergeOption.AppendOnly).ToList();
 		}
 	}
 }
