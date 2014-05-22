@@ -5,7 +5,11 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="a516660d55c7411ba2c9cb4da2aba3e3" Name="Diagram1">
-        <EntityTypeShape EntityType="MCModel.Property" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MCModel.Property" Width="1.5" PointX="3" PointY="0.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="MCModel.Client" Width="1.5" PointX="0.625" PointY="0.625" />
+        <EntityTypeShape EntityType="MCModel.PropertyRate" Width="1.5" PointX="3" PointY="4" />
+        <AssociationConnector Association="MCModel.FK_Property_Client" />
+        <AssociationConnector Association="MCModel.FK_PropertyRate_Property" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

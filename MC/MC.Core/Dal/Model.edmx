@@ -4,10 +4,31 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="MCModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="MCModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityContainer Name="MCModelStoreContainer">
+          <EntitySet Name="Client" EntityType="MCModel.Store.Client" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Property" EntityType="MCModel.Store.Property" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="PropertyRate" EntityType="MCModel.Store.PropertyRate" store:Type="Tables" Schema="dbo" />
+          <AssociationSet Name="FK_Property_Client" Association="MCModel.Store.FK_Property_Client">
+            <End Role="Client" EntitySet="Client" />
+            <End Role="Property" EntitySet="Property" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PropertyRate_Property" Association="MCModel.Store.FK_PropertyRate_Property">
+            <End Role="Property" EntitySet="Property" />
+            <End Role="PropertyRate" EntitySet="PropertyRate" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Client">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="AccountNumber" Type="varchar" MaxLength="50" />
+          <Property Name="FirstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="LastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="LoginName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Password" Type="varchar" MaxLength="50" />
+        </EntityType>
         <EntityType Name="Property">
           <Key>
             <PropertyRef Name="Id" />
@@ -16,14 +37,56 @@
           <Property Name="Name" Type="nvarchar" MaxLength="100" />
           <Property Name="Latitude" Type="float" />
           <Property Name="Longitude" Type="float" />
+          <Property Name="ClientId" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
-      </Schema>
-    </edmx:StorageModels>
+        <EntityType Name="PropertyRate">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="PropertyId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <Association Name="FK_Property_Client">
+          <End Role="Client" Type="MCModel.Store.Client" Multiplicity="1" />
+          <End Role="Property" Type="MCModel.Store.Property" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Client">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Property">
+              <PropertyRef Name="ClientId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PropertyRate_Property">
+          <End Role="Property" Type="MCModel.Store.Property" Multiplicity="1" />
+          <End Role="PropertyRate" Type="MCModel.Store.PropertyRate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Property">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PropertyRate">
+              <PropertyRef Name="PropertyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="MCModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="MCEntities" p1:LazyLoadingEnabled="true">
           <EntitySet Name="Properties" EntityType="MCModel.Property" />
+          <EntitySet Name="Clients" EntityType="MCModel.Client" />
+          <EntitySet Name="PropertyRates" EntityType="MCModel.PropertyRate" />
+          <AssociationSet Name="FK_Property_Client" Association="MCModel.FK_Property_Client">
+            <End Role="Client" EntitySet="Clients" />
+            <End Role="Property" EntitySet="Properties" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PropertyRate_Property" Association="MCModel.FK_PropertyRate_Property">
+            <End Role="Property" EntitySet="Properties" />
+            <End Role="PropertyRate" EntitySet="PropertyRates" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Property">
           <Key>
@@ -33,7 +96,55 @@
           <Property Name="Name" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
           <Property Name="Latitude" Type="Double" />
           <Property Name="Longitude" Type="Double" />
+          <Property Type="Guid" Name="ClientId" Nullable="false" />
+          <NavigationProperty Name="Client" Relationship="MCModel.FK_Property_Client" FromRole="Property" ToRole="Client" />
+          <NavigationProperty Name="PropertyRates" Relationship="MCModel.FK_PropertyRate_Property" FromRole="Property" ToRole="PropertyRate" />
         </EntityType>
+        <EntityType Name="Client">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Guid" Name="Id" Nullable="false" />
+          <Property Type="String" Name="AccountNumber" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="FirstName" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="LastName" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="LoginName" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Password" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Properties" Relationship="MCModel.FK_Property_Client" FromRole="Client" ToRole="Property" />
+        </EntityType>
+        <EntityType Name="PropertyRate">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Guid" Name="Id" Nullable="false" />
+          <Property Type="Guid" Name="PropertyId" Nullable="false" />
+          <Property Type="String" Name="Name" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Property" Relationship="MCModel.FK_PropertyRate_Property" FromRole="PropertyRate" ToRole="Property" />
+        </EntityType>
+        <Association Name="FK_Property_Client">
+          <End Type="MCModel.Client" Role="Client" Multiplicity="1" />
+          <End Type="MCModel.Property" Role="Property" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Client">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Property">
+              <PropertyRef Name="ClientId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PropertyRate_Property">
+          <End Type="MCModel.Property" Role="Property" Multiplicity="1" />
+          <End Type="MCModel.PropertyRate" Role="PropertyRate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Property">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PropertyRate">
+              <PropertyRef Name="PropertyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -43,10 +154,32 @@
           <EntitySetMapping Name="Properties">
             <EntityTypeMapping TypeName="MCModel.Property">
               <MappingFragment StoreEntitySet="Property">
+                <ScalarProperty Name="ClientId" ColumnName="ClientId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Latitude" ColumnName="Latitude" />
                 <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Clients">
+            <EntityTypeMapping TypeName="MCModel.Client">
+              <MappingFragment StoreEntitySet="Client">
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="LoginName" ColumnName="LoginName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="AccountNumber" ColumnName="AccountNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PropertyRates">
+            <EntityTypeMapping TypeName="MCModel.PropertyRate">
+              <MappingFragment StoreEntitySet="PropertyRate">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="PropertyId" ColumnName="PropertyId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

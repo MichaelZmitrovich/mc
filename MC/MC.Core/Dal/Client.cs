@@ -15,32 +15,32 @@ namespace MC.Core.Dal
 using System;
     using System.Collections.Generic;
     
-public partial class Property
+public partial class Client
 {
 
-    public Property()
+    public Client()
     {
 
-        this.PropertyRates = new HashSet<PropertyRate>();
+        this.Properties = new HashSet<Property>();
 
     }
 
 
     public System.Guid Id { get; set; }
 
-    public string Name { get; set; }
+    public string AccountNumber { get; set; }
 
-    public Nullable<double> Latitude { get; set; }
+    public string FirstName { get; set; }
 
-    public Nullable<double> Longitude { get; set; }
+    public string LastName { get; set; }
 
-    public System.Guid ClientId { get; set; }
+    public string LoginName { get; set; }
+
+    public string Password { get; set; }
 
 
 
-    public virtual Client Client { get; set; }
-
-    public virtual ICollection<PropertyRate> PropertyRates { get; set; }
+    public virtual ICollection<Property> Properties { get; set; }
 
 }
 

@@ -14,10 +14,12 @@ namespace MC.Core.Tests
         {
             using (new TransactionScope())
             {
+                Client client = NewClient();
                 PropertyDao dao = new PropertyDao();
                 Property entity = new Property
                 {
                     Id = Guid.NewGuid(),
+                    Client = client,
                     Name = "foo"
                 };
                 dao.Add(entity);
@@ -55,10 +57,13 @@ namespace MC.Core.Tests
 
             using (new TransactionScope())
             {
+                Client client = NewClient();
+                
                 PropertyDao dao = new PropertyDao();
                 Property entity = new Property
                 {
                     Id = Guid.NewGuid(),
+                    Client = client,
                     Name = "foo",
                     Latitude = 40,
                     Longitude = -70
@@ -74,6 +79,14 @@ namespace MC.Core.Tests
                 List<Property> list2 = dao.GetByPositionRange(39.9, -69.9, 39.8, -71.1);
                 Assert.AreEqual(0, list2.Count);
             }
+        }
+
+        private Client NewClient()
+        {
+            return new Client
+            {
+                Id = Guid.NewGuid()
+            };
         }
     }
 }
