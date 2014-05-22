@@ -1,0 +1,115 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "title";
+}
+
+<HTML><HEAD>
+<META content="text/html; charset=utf-8" 
+http-equiv="content-type"><TITLE>MarkerClusterer v3 Example</TITLE>
+<STYLE type="text/css">
+      body {
+        margin: 0;
+        padding: 10px 20px 20px;
+        font-family: Arial;
+        font-size: 16px;
+      }
+
+      #map-container {
+        padding: 6px;
+        border-width: 1px;
+        border-style: solid;
+        border-color: #ccc #ccc #999 #ccc;
+        -webkit-box-shadow: rgba(64, 64, 64, 0.5) 0 2px 5px;
+        -moz-box-shadow: rgba(64, 64, 64, 0.5) 0 2px 5px;
+        box-shadow: rgba(64, 64, 64, 0.1) 0 2px 5px;
+        width: 600px;
+      }
+
+      #map {
+        width: 600px;
+        height: 400px;
+      }
+    </STYLE>
+
+<SCRIPT src="~/Scripts/jsapi.js"></SCRIPT>
+
+<SCRIPT type="text/javascript" src="~/Scripts/markerclusterer_compiled.js"></SCRIPT>
+
+<SCRIPT type="text/javascript">
+    google.load('maps', '3', {
+        other_params: 'sensor=false'
+    });
+
+    google.setOnLoadCallback(initialize);
+
+    var markerClusterer = null;
+    var map = null;
+    var imageUrl = 'http://chart.apis.google.com/chart?cht=mm&chs=24x32&' + 'chco=FFFFFF,008CFF,000000&ext=.png';
+
+    var data;
+
+    function refreshMap() {
+        if (markerClusterer) {
+            markerClusterer.clearMarkers();
+        }
+
+        var markers = [];
+
+        var markerImage = new google.maps.MarkerImage(imageUrl, new google.maps.Size(24, 32));
+
+        if (data) {
+            for (var i = 0; i < data.length; ++i) {
+
+                var latLng = new google.maps.LatLng(data[i].Lat, data[i].Lng);
+
+                var marker = new google.maps.Marker({
+                    position: latLng,
+                    draggable: true,
+                    icon: markerImage
+                });
+                markers.push(marker);
+            }
+        }
+
+        markerClusterer = new MarkerClusterer(map, markers);
+    }
+
+    function initialize() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 3,
+            center: new google.maps.LatLng(55.00, -90.00),
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+
+        google.maps.event.addListener(map, 'idle', loadProperties);
+
+        refreshMap();
+    }
+
+    function loadProperties() {
+        var bounds = map.getBounds();
+        var ne = bounds.getNorthEast();
+        var sw = bounds.getSouthWest();
+
+        var url = "/api/positions?north=" + ne.lat() + "&east=" + ne.lng() + "&south=" + sw.lat() + "&west=" + sw.lng();
+        $.getJSON(url)
+          .done(function (d) {
+              data = d;
+              refreshMap();
+          })
+          .error(function (d) {
+              alert(d);
+          });
+    }
+
+    </SCRIPT>
+
+<META name="GENERATOR" content="MSHTML 9.00.8112.16447"></HEAD>
+<BODY>
+  <form id="Form1" runat="server">
+</form>
+<H3>An example of MarkerClusterer v3</H3>
+<DIV id="map-container">
+<DIV id="map"></DIV></DIV>
+</BODY></HTML>
