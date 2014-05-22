@@ -8,7 +8,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{b488cab4-5944-4b2e-a3d8-d4b608040945}</ProjectGuid>
-    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql120DatabaseSchemaProvider</DSP>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql100DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
@@ -67,5 +67,8 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\PropertyRate.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Local.publish.xml" />
   </ItemGroup>
 </Project>
