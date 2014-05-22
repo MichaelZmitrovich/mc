@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MC.Core.Dal;
 
-namespace KZ.MoreCottages.Core.Dal
+namespace MC.Core.Dal
 {
     public class PropertyDao : DaoBase<Property>
     {
