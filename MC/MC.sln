@@ -11,6 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MC.Core.Tests", "MC.Core.Te
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "MC.Dac", "MC.Dac\MC.Dac.sqlproj", "{B488CAB4-5944-4B2E-A3D8-D4B608040945}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CC01BF7D-AE34-487B-8C86-2D3885EA7181}"
+	ProjectSection(SolutionItems) = preProject
+		copy.ps1 = copy.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
